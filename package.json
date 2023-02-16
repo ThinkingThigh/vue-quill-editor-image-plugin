@@ -1,0 +1,22 @@
+{
+  "name": "vue-quill-editor-image-plugin",
+  "version": "1.0.0",
+  "description": "vue-quill-editor-image-plugin",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ThinkingThigh/vue-quill-editor-image-plugin.git"
+  },
+  "keywords": [
+    "vue-quill-editor-image-plugin"
+  ],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ThinkingThigh/vue-quill-editor-image-plugin/issues"
+  },
+  "homepage": "https://github.com/ThinkingThigh/vue-quill-editor-image-plugin#readme"
+}
