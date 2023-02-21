@@ -8,6 +8,12 @@ export const QuillWatcher = {
   },
   emit: function (id, type = "button") {
     this.active = this.watcher[id];
+    // 光标问题修复
+    setTimeout(() => {
+      this.active.cursorIndex = this.active.quill.getSelection()
+        ? this.active.quill.getSelection().index
+        : this.active.quill.getLength();
+    }, 0);
     // 类型默认为按钮点击上传
     if (type == "button") {
       handleImageButtion();
