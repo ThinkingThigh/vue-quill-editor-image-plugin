@@ -137,29 +137,29 @@ export class QuillImagePlugin {
     QuillWatcher.active.cursorIndex = length;
     QuillWatcher.active.quill.insertText(
       QuillWatcher.active.cursorIndex,
-      "[uploading...]",
+      "[上传中...]",
       { color: "red" },
       true
     );
   }
 
   onprogress(pro) {
-    pro = "[" + "uploading" + pro + "]";
+    pro = "[" + "上传中" + pro + "]";
     QuillWatcher.active.quill.root.innerHTML =
-      QuillWatcher.active.quill.root.innerHTML.replace(/\[uploading.*?\]/, pro);
+      QuillWatcher.active.quill.root.innerHTML.replace(/\[上传中.*?\]/, pro);
   }
 
   onuploaderror(msg) {
     QuillWatcher.active.quill.root.innerHTML =
       QuillWatcher.active.quill.root.innerHTML.replace(
-        /\[uploading.*?\]/,
-        msg || "[upload error]"
+        /\[上传中.*?\]/,
+        msg ? "[" + msg + "]" : "[上传错误]"
       );
   }
 
   onuploadsuccess() {
     QuillWatcher.active.quill.root.innerHTML =
-      QuillWatcher.active.quill.root.innerHTML.replace(/\[uploading.*?\]/, "");
+      QuillWatcher.active.quill.root.innerHTML.replace(/\[上传中.*?\]/, "");
   }
 }
 
