@@ -92,3 +92,7 @@ export default {
 };
 </script>
 ```
+
+## CHANGELOG
+
+[CHANGELOG.md](https://github.com/ThinkingThigh/vue-quill-editor-image-plugin/blob/main/CHANGELOG.md)
