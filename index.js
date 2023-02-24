@@ -8,12 +8,6 @@ export const QuillWatcher = {
   },
   emit: function (id, type = "button") {
     this.active = this.watcher[id];
-    // 光标问题修复
-    setTimeout(() => {
-      this.active.cursorIndex = this.active.quill.getSelection()
-        ? this.active.quill.getSelection().index
-        : this.active.quill.getLength();
-    }, 0);
     // 类型默认为按钮点击上传
     if (type == "button") {
       handleImageButtion();
@@ -30,11 +24,11 @@ export class QuillImagePlugin {
     this.file = "";
     this.resUrl = "";
     // 剪切板粘贴事件监听
-    // quill.root.addEventListener("paste", this.handlePaste.bind(this), false);
+    quill.root.addEventListener("paste", this.handlePaste.bind(this), false);
     this.cursorIndex = 0;
     QuillWatcher.on(this.id, this);
   }
-  // TODO: 剪切板bug待修复
+  // 剪切板处理方法
   handlePaste(e) {
     QuillWatcher.emit(this.quill.id, "paste");
     let clipboardData = e.clipboardData;
@@ -54,6 +48,8 @@ export class QuillImagePlugin {
         }
       }
       if (item && item.kind === "file" && item.type.match(/^image\//i)) {
+        // 图片类型屏蔽默认事件（base64图片）
+        e.preventDefault();
         this.file = item.getAsFile();
         if (this.config.action) {
           this.handleUpload();
@@ -67,7 +63,6 @@ export class QuillImagePlugin {
   toBase64() {
     const reader = new FileReader();
     reader.onload = (e) => {
-      // 返回base64
       this.resUrl = e.target.result;
       this.insertImage();
     };
@@ -119,22 +114,28 @@ export class QuillImagePlugin {
   }
   // 向富文本插入图片
   insertImage() {
+    // console.log(
+    //   "QuillWatcher.active.cursorIndex",
+    //   QuillWatcher.active.cursorIndex
+    // );
     QuillWatcher.active.quill.insertEmbed(
       QuillWatcher.active.cursorIndex,
       "image",
       QuillWatcher.active.resUrl
     );
-    QuillWatcher.active.quill.update();
-    QuillWatcher.active.quill.setSelection(QuillWatcher.active.cursorIndex + 1);
+    setTimeout(() => {
+      QuillWatcher.active.quill.setSelection(
+        QuillWatcher.active.cursorIndex + 1
+      );
+    }, 0);
   }
 
   // 上传处理相关
 
   onloadstart() {
-    let length =
-      (QuillWatcher.active.quill.getSelection() || {}).index ||
-      QuillWatcher.active.quill.getLength();
-    QuillWatcher.active.cursorIndex = length;
+    // 修复剪切板光标错误问题
+    QuillWatcher.active.cursorIndex =
+      QuillWatcher.active.quill.getSelection(true).index;
     QuillWatcher.active.quill.insertText(
       QuillWatcher.active.cursorIndex,
       "[上传中...]",
