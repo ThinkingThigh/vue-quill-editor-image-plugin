@@ -1,6 +1,6 @@
 {
   "name": "vue-quill-editor-image-plugin",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "vue-quill-editor-image-plugin",
   "main": "index.js",
   "scripts": {
