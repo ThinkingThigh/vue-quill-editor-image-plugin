@@ -32,21 +32,15 @@ export class QuillImagePlugin {
   handlePaste(e) {
     QuillWatcher.emit(this.quill.id, "paste");
     let clipboardData = e.clipboardData;
-    let i = 0;
-    let items, item, types;
+    // console.log("clipboardData", clipboardData);
     if (clipboardData) {
-      items = clipboardData.items;
-      if (!items) {
-        return;
-      }
-      item = items[0];
-      types = clipboardData.types || [];
-      for (; i < types.length; i++) {
-        if (types[i] === "Files") {
-          item = items[i];
-          break;
-        }
-      }
+      // let types = clipboardData.types;
+      let items = clipboardData.items;
+      // let isSmSource = types.includes("sm/source");
+      // console.log("items", items);
+      let item = items[0];
+      // console.log("types", types);
+      // console.log("item", item);
       if (item && item.kind === "file" && item.type.match(/^image\//i)) {
         // 图片类型屏蔽默认事件（base64图片）
         e.preventDefault();
@@ -57,6 +51,17 @@ export class QuillImagePlugin {
           this.toBase64();
         }
       }
+      // 图文混合粘贴或多图粘贴处理
+      // if (item && item.kind === "text/html" && isSmSource) {
+      //   e.preventDefault();
+      //   item.getAsString((str) => {
+      //     console.log("str", str);
+      //     this.insertText(str);
+      //   });
+      //   // this.insertImage(
+      //   //   "https://static.zhiyinlou.com/static/cp_error.png"
+      //   // );
+      // }
     }
   }
 
@@ -113,7 +118,7 @@ export class QuillImagePlugin {
     xhr.send(formData);
   }
   // 向富文本插入图片
-  insertImage() {
+  insertImage(url) {
     // console.log(
     //   "QuillWatcher.active.cursorIndex",
     //   QuillWatcher.active.cursorIndex
@@ -121,8 +126,17 @@ export class QuillImagePlugin {
     QuillWatcher.active.quill.insertEmbed(
       QuillWatcher.active.cursorIndex,
       "image",
-      QuillWatcher.active.resUrl
+      url || QuillWatcher.active.resUrl
     );
+    setTimeout(() => {
+      QuillWatcher.active.quill.setSelection(
+        QuillWatcher.active.cursorIndex + 1
+      );
+    }, 0);
+  }
+  // 向富文本插入text
+  insertText(str) {
+    QuillWatcher.active.quill.insertText(QuillWatcher.active.cursorIndex, str);
     setTimeout(() => {
       QuillWatcher.active.quill.setSelection(
         QuillWatcher.active.cursorIndex + 1
