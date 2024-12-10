@@ -71,6 +71,7 @@ export class QuillImagePlugin {
       // ['text/plain', 'text/html'] 网页中的图文混合
       // ['Files'] 截图
       // ['text/plain', 'text/html', 'vscode-editor-data'] vscode中复制内容
+      // ['text/plain', 'text/html', 'text/rtf', 'Files'] mac word复制内容
 
       // 常见的kind
       // string 、 file
@@ -85,7 +86,7 @@ export class QuillImagePlugin {
       // 2. 其次取text/plain 如果 text/plain 中有图片为base64过滤掉
       // 3. 最后取text/html
 
-      if (types.includes("Files")) {
+      if (types.includes("Files") && !types.includes("text/rtf")) {
         item = this.getItemByKindType(items, "file");
         if (item && item.kind === "file" && item.type.match(/^image\//i)) {
           // 图片类型屏蔽默认事件（base64图片）
@@ -237,9 +238,8 @@ export class QuillImagePlugin {
 
   onloadstart() {
     // 修复剪切板光标错误问题
-    QuillWatcher.active.cursorIndex = QuillWatcher.active.quill.getSelection(
-      true
-    ).index;
+    QuillWatcher.active.cursorIndex =
+      QuillWatcher.active.quill.getSelection(true).index;
     QuillWatcher.active.quill.insertText(
       QuillWatcher.active.cursorIndex,
       "[上传中...]",
@@ -250,24 +250,21 @@ export class QuillImagePlugin {
 
   onprogress(pro) {
     pro = "[" + "上传中" + pro + "]";
-    QuillWatcher.active.quill.root.innerHTML = QuillWatcher.active.quill.root.innerHTML.replace(
-      /\[上传中.*?\]/,
-      pro
-    );
+    QuillWatcher.active.quill.root.innerHTML =
+      QuillWatcher.active.quill.root.innerHTML.replace(/\[上传中.*?\]/, pro);
   }
 
   onuploaderror(msg) {
-    QuillWatcher.active.quill.root.innerHTML = QuillWatcher.active.quill.root.innerHTML.replace(
-      /\[上传中.*?\]/,
-      msg ? "[" + msg + "]" : "[上传错误]"
-    );
+    QuillWatcher.active.quill.root.innerHTML =
+      QuillWatcher.active.quill.root.innerHTML.replace(
+        /\[上传中.*?\]/,
+        msg ? "[" + msg + "]" : "[上传错误]"
+      );
   }
 
   onuploadsuccess() {
-    QuillWatcher.active.quill.root.innerHTML = QuillWatcher.active.quill.root.innerHTML.replace(
-      /\[上传中.*?\]/,
-      ""
-    );
+    QuillWatcher.active.quill.root.innerHTML =
+      QuillWatcher.active.quill.root.innerHTML.replace(/\[上传中.*?\]/, "");
   }
 }
 
